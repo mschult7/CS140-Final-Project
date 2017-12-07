@@ -24,6 +24,7 @@ public class FullAssembler implements Assembler {
 		boolean checkBlank = false;
 		int lineErr = 0;
 		int retval = 0;
+		int offset = 0;
 		for(int i=0;i<list.size();i++) {
 			String line = list.get(i);
 			String[] parts = line.trim().split("\\s+");
@@ -56,6 +57,7 @@ public class FullAssembler implements Assembler {
 				readingCode = false;
 				if(!line.trim().equals("DATA")) {
 					lineErr = i+1;
+					offset = i+1;
 					error.append("\nLine does not have DATA in upper case");
 					retval = lineErr;
 				}
@@ -107,6 +109,8 @@ public class FullAssembler implements Assembler {
 							}
 							int arg = Integer.parseInt(parts[1],16);
 							//.. the rest of setting up the opPart
+							int opPart = 8*Instruction.opcodes.get(parts[0]) + flags;
+							opPart += Instruction.numOnes(opPart)%2;
 						} catch(NumberFormatException e) {
 							error.append("\nError on line " + (i+1) + 
 									": argument is not a hex number");
@@ -117,9 +121,26 @@ public class FullAssembler implements Assembler {
 					}
 				}
 			}
+			if(!readingCode) {
+				if(parts.length ==2) {
+					try {
+						int address = Integer.parseInt(parts[0],16);
+						int value = Integer.parseInt(parts[1],16);
+					} catch(NumberFormatException e) {
+						error.append("\nError on line " + (offset+i+1) + 
+								": data has non-numeric memory address");
+						retval = offset + i + 1;				
+					}
+				}
+
+			}
 
 		}
 		System.out.println(error);
+		if(retval ==0) {
+			new SimpleAssembler().assemble(inputFileName, 
+					outputFileName, error);
+		}
 		return retval;
 	}
 	public static void main(String[] args) {
@@ -127,8 +148,6 @@ public class FullAssembler implements Assembler {
 		System.out.println("Enter the name of the file without extension: ");
 		try (Scanner keyboard = new Scanner(System.in)) { 
 			String filename = keyboard.nextLine();
-			//			System.out.println(new SimpleAssembler().assemble(filename + ".pasm", 
-			//					filename + ".pexe", error));
 			System.out.println(new FullAssembler().assemble(filename + ".pasm", filename + ".pexe", error));
 		}
 	}
