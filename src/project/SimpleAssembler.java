@@ -111,7 +111,7 @@ public class SimpleAssembler implements Assembler {
 			int i = new SimpleAssembler().assemble(filename + ".pasm", 
 					filename + ".pexe", error);
 			System.out.println("result = " + i);
-			//System.out.println(new FullAssembler().assemble(filename + ".pasm", filename + ".pexe", error));
+			System.out.println(new FullAssembler().assemble(filename + ".pasm", filename + ".pexe", error));
 		}
 	}
 }
