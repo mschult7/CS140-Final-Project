@@ -99,5 +99,14 @@ public class FullAssembler implements Assembler {
 		System.out.println(error);
 		return retval;
 	}
-
+	public static void main(String[] args) {
+		StringBuilder error = new StringBuilder();
+		System.out.println("Enter the name of the file without extension: ");
+		try (Scanner keyboard = new Scanner(System.in)) { 
+			String filename = keyboard.nextLine();
+			System.out.println(new SimpleAssembler().assemble(filename + ".pasm", 
+					filename + ".pexe", error));
+			System.out.println(new FullAssembler().assemble(filename + ".pasm", filename + ".pexe", error));
+		}
+	}
 }
