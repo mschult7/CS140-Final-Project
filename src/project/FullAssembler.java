@@ -32,7 +32,7 @@ public class FullAssembler implements Assembler {
 				checkBlank=true;
 				lineErr = i+1;
 			} else if(checkBlank){
-				error.append("\nIllegal blank line(" + lineErr + ") in the source file");
+				error.append("\nIllegal blank line in the source file on line " + lineErr);
 				retval = lineErr;
 				checkBlank = false;
 			}
@@ -74,7 +74,7 @@ public class FullAssembler implements Assembler {
 					retval = lineErr;
 				}
 			}
-			
+			//mneumonic argument checker
 			if(!checkBlank && opcodes.keySet().contains(parts[0]) && readingCode) {
 				if(Assembler.noArgument.contains(line.trim().split("\\s+")[0])) {
 					if(parts.length!=1) {
@@ -91,6 +91,29 @@ public class FullAssembler implements Assembler {
 						lineErr = i+1;
 						error.append("\nError on line " + (i+1) + ": this mnemonic is missing an argument");
 						retval = lineErr;
+					} else {
+						try{
+							int flags = 0;
+							if(parts[1].charAt(0) == '#') {
+								flags = 2;
+								parts[1] = parts[1].substring(1);
+								
+							}else if(parts[1].charAt(0) == '@') {
+								flags =4;
+								parts[1] = parts[1].substring(1);
+							}else if(parts[1].charAt(0) == '&') {
+								flags = 6;
+								parts[1] = parts[1].substring(1);
+							}
+								int arg = Integer.parseInt(parts[1],16);
+							//.. the rest of setting up the opPart
+							} catch(NumberFormatException e) {
+								error.append("\nError on line " + (i+1) + 
+										": argument is not a hex number");
+								retval = i + 1;				
+							} // At this point, all the code input has been put in a List and i is the current index
+							// so the line number is 1 larger than the index (index 0 corresponds to line 1)
+						
 					}
 				}
 			}
@@ -104,8 +127,8 @@ public class FullAssembler implements Assembler {
 		System.out.println("Enter the name of the file without extension: ");
 		try (Scanner keyboard = new Scanner(System.in)) { 
 			String filename = keyboard.nextLine();
-			System.out.println(new SimpleAssembler().assemble(filename + ".pasm", 
-					filename + ".pexe", error));
+//			System.out.println(new SimpleAssembler().assemble(filename + ".pasm", 
+//					filename + ".pexe", error));
 			System.out.println(new FullAssembler().assemble(filename + ".pasm", filename + ".pexe", error));
 		}
 	}
