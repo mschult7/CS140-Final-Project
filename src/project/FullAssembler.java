@@ -5,10 +5,9 @@ import java.util.*;
 import static project.Instruction.*;
 
 public class FullAssembler implements Assembler {
-	private boolean readingCode = true;
 	@Override
 	public int assemble(String inputFileName, String outputFileName, StringBuilder error) {
-
+		boolean readingCode = true;
 		if(error==null) {
 			throw new IllegalArgumentException("Error cant be null");
 		}
@@ -107,7 +106,7 @@ public class FullAssembler implements Assembler {
 								flags = 6;
 								parts[1] = parts[1].substring(1);
 							}
-							int arg = Integer.parseInt(parts[1],16);
+							Integer.parseInt(parts[1],16);
 							//.. the rest of setting up the opPart
 							int opPart = 8*Instruction.opcodes.get(parts[0]) + flags;
 							opPart += Instruction.numOnes(opPart)%2;
@@ -124,8 +123,8 @@ public class FullAssembler implements Assembler {
 			if(!readingCode) {
 				if(parts.length ==2) {
 					try {
-						int address = Integer.parseInt(parts[0],16);
-						int value = Integer.parseInt(parts[1],16);
+						Integer.parseInt(parts[0],16);
+						Integer.parseInt(parts[1],16);
 					} catch(NumberFormatException e) {
 						error.append("\nError on line " + (offset+i+1) + 
 								": data has non-numeric memory address");
